@@ -3,153 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>חבילה עוברת - בר אילן (מערכת ניהול)</title>
+    <title>חבילה עוברת - בר אילן</title>
     <style>
         :root { --bg-green: #003e29; --biu-blue: #72d3f0; }
-
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            background-color: var(--bg-green);
-            font-family: 'Segoe UI', Arial, sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            direction: rtl; overflow: hidden;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
-
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-green); font-family: 'Segoe UI', Arial, sans-serif; display: flex; justify-content: center; align-items: center; direction: rtl; overflow: hidden; }
+        .app-container { width: 100%; max-width: 480px; height: 100dvh; display: flex; flex-direction: column; align-items: center; position: relative; }
         .img-header { width: 100%; height: auto; flex-shrink: 0; }
         .img-logo { width: 45%; max-width: 160px; height: auto; margin-top: 10px; flex-shrink: 0; }
-        
-        .player-display {
-            color: white; 
-            font-size: clamp(20px, 6vw, 28px);
-            font-weight: bold;
-            margin: 10px 0;
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
+        .player-display { color: white; font-size: clamp(20px, 6vw, 28px); font-weight: bold; margin: 10px 0; text-align: center; }
         .gift-area { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; min-height: 0; }
         .img-gift { max-width: 60%; max-height: 70%; object-fit: contain; cursor: pointer; }
-
         .footer-area { width: 100%; text-align: center; padding-bottom: env(safe-area-inset-bottom, 15px); flex-shrink: 0; }
         .img-btn { width: 75%; max-width: 300px; height: auto; cursor: pointer; }
 
-        /* מסך הגדרות והוראות למנחה */
-        #setup-screen {
-            position: absolute; inset: 0; background: var(--bg-green);
-            z-index: 1000; display: flex; flex-direction: column; align-items: center;
-            overflow-y: auto; padding-bottom: 30px;
-        }
-
-        .guide-box {
-            width: 90%;
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid var(--biu-blue);
-            border-radius: 15px;
-            padding: 20px;
-            color: white;
-            font-size: 14px;
-            margin-top: 20px;
-            line-height: 1.6;
-            box-sizing: border-box;
-        }
-
-        .guide-box h2 { color: var(--biu-blue); margin: 0 0 15px 0; font-size: 20px; text-align: center; border-bottom: 1px solid rgba(114, 211, 240, 0.3); padding-bottom: 10px; }
-        .guide-box h4 { color: var(--biu-blue); margin: 15px 0 5px 0; font-size: 16px; }
-        .guide-box p { margin: 5px 0; }
-        .guide-box ul { padding-right: 18px; margin: 5px 0; }
-        .guide-box li { margin-bottom: 5px; }
+        #setup-screen { position: absolute; inset: 0; background: var(--bg-green); z-index: 1000; display: flex; flex-direction: column; align-items: center; overflow-y: auto; padding: 0 20px 30px 20px; box-sizing: border-box; }
+        .guide-box { width: 100%; background: rgba(255, 255, 255, 0.08); border: 2px solid var(--biu-blue); border-radius: 15px; padding: 15px; color: white; font-size: 13px; margin-top: 20px; line-height: 1.5; box-sizing: border-box; }
+        .guide-box h2 { color: var(--biu-blue); margin: 0 0 10px 0; font-size: 18px; text-align: center; border-bottom: 1px solid rgba(114, 211, 240, 0.3); padding-bottom: 5px; }
         
-        .highlight { background: #72d3f0; color: #003e29; padding: 0 4px; font-weight: bold; border-radius: 3px; }
+        label { color: var(--biu-blue); font-weight: bold; align-self: flex-start; margin-top: 15px; margin-bottom: 5px; }
+        textarea { width: 100%; border-radius: 10px; border: 2px solid white; padding: 10px; font-size: 14px; box-sizing: border-box; font-family: inherit; }
+        #nameInput { height: 80px; }
+        #taskInput { height: 120px; }
 
-        textarea {
-            width: 90%; height: 100px; margin: 20px 0;
-            border-radius: 10px; border: 2px solid white; padding: 12px; font-size: 16px;
-            box-sizing: border-box; font-family: inherit;
-        }
-
-        #task-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; width: 85%; padding: 25px; border-radius: 20px;
-            text-align: center; display: none; z-index: 1500;
-            box-shadow: 0 0 50px rgba(0,0,0,0.9); border: 5px solid var(--biu-blue);
-            box-sizing: border-box;
-        }
-        
+        #task-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 85%; padding: 25px; border-radius: 20px; text-align: center; display: none; z-index: 1500; box-shadow: 0 0 50px rgba(0,0,0,0.9); border: 5px solid var(--biu-blue); box-sizing: border-box; }
         .pulse { animation: pulseAnim 0.7s infinite alternate; }
         @keyframes pulseAnim { from { transform: scale(1); } to { transform: scale(1.08); } }
     </style>
 </head>
 <body>
-
     <div class="app-container">
-        <!-- לוח הבקרה של המנחה (מופיע רק בהתחלה) -->
         <div id="setup-screen">
             <img src="header.png" class="img-header">
-            
             <div class="guide-box">
-                <h2>🛠️ לוח בקרה למנחה (זום / טימס)</h2>
-                
-                <p><strong>מי שולט?</strong> רק אתה (המנחה) לוחץ על הכפתורים. המשתתפים צופים בשידור המסך שלך.</p>
-                
-                <h4>1. הכנה ושיתוף מסך:</h4>
-                <ul>
-                    <li>לחץ על <strong>Share Screen</strong> ובחר בחלון זה.</li>
-                    <li>סמן ב-V: <span class="highlight">Share Sound</span> (כדי שישמעו את האקשן).</li>
-                    <li>סמן ב-V: <span class="highlight">Optimize for Video</span> (כדי שהאנימציה תזרום).</li>
-                </ul>
-
-                <h4>2. הפעלת המשחק:</h4>
-                <ul>
-                    <li>הדבק את שמות המשתתפים בתיבה למטה ולחץ על "הכנס".</li>
-                    <li>לחץ על <strong>סובב חבילה</strong> להגרלת שם.</li>
-                    <li>כשהחבילה עוצרת - לחץ על <strong>המתנה</strong> כדי לגלות משימה.</li>
-                </ul>
-
-                <h4>3. טיפ למתקדמים (Remote Control):</h4>
-                <p>רוצה שהמשתתף "יפתח" את המתנה בעצמו? תן לו <strong>Remote Control</strong> דרך סרגל הזום, והוא יוכל ללחוץ על המתנה מהבית שלו!</p>
+                <h2>🛠️ לוח בקרה למרצה</h2>
+                <p><strong>1. שתף מסך:</strong> סמן "Share Sound" ו-"Optimize for Video".</p>
+                <p><strong>2. הכן משחק:</strong> הדבק שמות סטודנטים וערוך את המשימות למטה.</p>
+                <p><strong>3. שחק:</strong> סובב חבילה, חכה לעצירה ולחץ על המתנה.</p>
             </div>
 
-            <textarea id="nameInput" placeholder="הדבק כאן שמות (מופרדים בפסיקים או שורות חדשות)..."></textarea>
+            <label>👥 רשימת סטודנטים:</label>
+            <textarea id="nameInput" placeholder="הדבק שמות כאן..."></textarea>
+
+            <label>📝 עריכת משימות (משימה בכל שורה):</label>
+            <textarea id="taskInput"></textarea>
             
-            <img src="btn_enter.png" class="img-btn" onclick="initGame()">
+            <div style="margin-top:20px; width: 100%; text-align: center;">
+                <img src="btn_enter.png" class="img-btn" onclick="initGame()">
+            </div>
         </div>
 
-        <!-- דף המשחק (מה שרואים בשיתוף מסך) -->
         <img src="header.png" class="img-header">
         <img src="logo.png" class="img-logo">
-
-        <div id="player-display" class="player-display">מוכנים להתחיל?</div>
-
-        <div class="gift-area">
-            <img src="gift.png" id="giftImg" class="img-gift" onclick="showTask()">
-        </div>
-
+        <div id="player-display" class="player-display">מוכנים?</div>
+        <div class="gift-area"><img src="gift.png" id="giftImg" class="img-gift" onclick="showTask()"></div>
         <div id="task-overlay" onclick="this.style.display='none'">
-            <h2 id="task-text" style="color:#003e29; margin:0; font-size: 24px; line-height:1.4;">משימה</h2>
-            <p style="color:#888; margin-top:20px; font-size: 14px; font-weight:bold;">(לחץ לסגירה ומעבר לסיבוב הבא)</p>
+            <h2 id="task-text" style="color:#003e29; margin:0; font-size: 24px;"></h2>
+            <p style="color:#888; margin-top:20px; font-size: 14px;">(לחץ לסגירה)</p>
         </div>
-
-        <div class="footer-area">
-            <img src="btn_spin.png" id="spinBtn" class="img-btn" onclick="startSpin()">
-        </div>
+        <div class="footer-area"><img src="btn_spin.png" id="spinBtn" class="img-btn" onclick="startSpin()"></div>
     </div>
 
     <script>
         let players = [];
+        let customTasks = [];
         let spinning = false;
         
-        const tasks = [
+        const defaultTasks = [
             "ספר משהו שאנשים כאן לא יודעים עליך",
             "מה המאכל האהוב עליך בקמפוס?",
             "מה הדבר הכי מעניין שלמדת השבוע?",
@@ -158,16 +77,22 @@
             "מה המקום האהוב עליך באוניברסיטה?",
             "מה החלום הבא שאתה רוצה להגשים?",
             "תן טיפ לחיים שעוזר לך ביומיום",
-            "איך אתה שותה את הקפה שלך?",
-            "מה הדבר הראשון שתעשה בסוף התואר?",
-            "אם היית יכול להמציא קורס חדש - איך היו קוראים לו?",
-            "מה השיר שתמיד מרים לך את המצב רוח?"
+            "מה הדבר הראשון שתעשה בסוף התואר?"
         ];
 
+        // מילוי אוטומטי של המשימות בטעינה
+        document.getElementById('taskInput').value = defaultTasks.join('\n');
+
         function initGame() {
-            const input = document.getElementById('nameInput').value;
-            players = input.split(/[,\n\t]+/).map(s => s.trim()).filter(s => s !== "");
-            if (players.length < 2) return alert("נא להזין לפחות 2 שמות כדי להתחיל את המשחק");
+            const nInput = document.getElementById('nameInput').value;
+            const tInput = document.getElementById('taskInput').value;
+            
+            players = nInput.split(/[,\n\t]+/).map(s => s.trim()).filter(s => s !== "");
+            customTasks = tInput.split('\n').map(s => s.trim()).filter(s => s !== "");
+
+            if (players.length < 2) return alert("נא להזין לפחות 2 שמות");
+            if (customTasks.length === 0) return alert("חייבת להיות לפחות משימה אחת");
+            
             document.getElementById('setup-screen').style.display = 'none';
         }
 
@@ -176,20 +101,15 @@
             spinning = true;
             document.getElementById('task-overlay').style.display = 'none';
             document.getElementById('giftImg').classList.remove('pulse');
-            document.getElementById('player-display').style.color = "#72d3f0";
-            
             let counter = 0;
-            let totalSteps = 12 + Math.floor(Math.random() * 15);
-            
+            let totalSteps = 12 + Math.floor(Math.random() * 12);
             const timer = setInterval(() => {
                 document.getElementById('player-display').innerText = players[counter % players.length];
                 counter++;
-                
                 if (counter > totalSteps) {
                     clearInterval(timer);
                     spinning = false;
-                    document.getElementById('player-display').style.color = "white";
-                    document.getElementById('player-display').innerText = "עצרנו על: " + document.getElementById('player-display').innerText;
+                    document.getElementById('player-display').innerText = "המשימה ל: " + document.getElementById('player-display').innerText;
                     document.getElementById('giftImg').classList.add('pulse');
                 }
             }, 100);
@@ -197,8 +117,7 @@
 
         function showTask() {
             if (spinning) return;
-            if (players.length === 0) return;
-            const task = tasks[Math.floor(Math.random() * tasks.length)];
+            const task = customTasks[Math.floor(Math.random() * customTasks.length)];
             document.getElementById('task-text').innerText = task;
             document.getElementById('task-overlay').style.display = 'block';
         }
