@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>חבילה עוברת - בר אילן</title>
+    <title>חבילה עוברת - בר אילן (מערכת ניהול)</title>
     <style>
         :root { --bg-green: #003e29; --biu-blue: #72d3f0; }
 
@@ -18,7 +18,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             height: 100dvh;
             display: flex;
             flex-direction: column;
@@ -27,55 +27,61 @@
         }
 
         .img-header { width: 100%; height: auto; flex-shrink: 0; }
-        .img-logo { width: 50%; max-width: 180px; height: auto; margin-top: 10px; flex-shrink: 0; }
+        .img-logo { width: 45%; max-width: 160px; height: auto; margin-top: 10px; flex-shrink: 0; }
         
         .player-display {
             color: white; 
-            font-size: clamp(22px, 6vw, 32px);
+            font-size: clamp(20px, 6vw, 28px);
             font-weight: bold;
             margin: 10px 0;
             text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .gift-area { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; min-height: 0; }
-        .img-gift { max-width: 65%; max-height: 75%; object-fit: contain; cursor: pointer; }
+        .img-gift { max-width: 60%; max-height: 70%; object-fit: contain; cursor: pointer; }
 
-        .footer-area { width: 100%; text-align: center; padding-bottom: env(safe-area-inset-bottom, 20px); flex-shrink: 0; }
-        .img-btn { width: 80%; max-width: 320px; height: auto; cursor: pointer; }
+        .footer-area { width: 100%; text-align: center; padding-bottom: env(safe-area-inset-bottom, 15px); flex-shrink: 0; }
+        .img-btn { width: 75%; max-width: 300px; height: auto; cursor: pointer; }
 
-        /* מסך הגדרות והוראות */
+        /* מסך הגדרות והוראות למנחה */
         #setup-screen {
             position: absolute; inset: 0; background: var(--bg-green);
-            z-index: 100; display: flex; flex-direction: column; align-items: center;
+            z-index: 1000; display: flex; flex-direction: column; align-items: center;
             overflow-y: auto; padding-bottom: 30px;
         }
 
-        .instructions-box {
-            width: 85%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--biu-blue);
+        .guide-box {
+            width: 90%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid var(--biu-blue);
             border-radius: 15px;
-            padding: 15px;
+            padding: 20px;
             color: white;
             font-size: 14px;
             margin-top: 20px;
-            line-height: 1.5;
+            line-height: 1.6;
+            box-sizing: border-box;
         }
 
-        .instructions-box h3 { color: var(--biu-blue); margin-top: 0; margin-bottom: 10px; font-size: 18px; text-align: center; }
-        .instructions-box ul { padding-right: 20px; margin: 0; }
-        .instructions-box li { margin-bottom: 8px; }
+        .guide-box h2 { color: var(--biu-blue); margin: 0 0 15px 0; font-size: 20px; text-align: center; border-bottom: 1px solid rgba(114, 211, 240, 0.3); padding-bottom: 10px; }
+        .guide-box h4 { color: var(--biu-blue); margin: 15px 0 5px 0; font-size: 16px; }
+        .guide-box p { margin: 5px 0; }
+        .guide-box ul { padding-right: 18px; margin: 5px 0; }
+        .guide-box li { margin-bottom: 5px; }
+        
+        .highlight { background: #72d3f0; color: #003e29; padding: 0 4px; font-weight: bold; border-radius: 3px; }
 
         textarea {
-            width: 85%; height: 100px; margin: 15px 0;
-            border-radius: 10px; border: none; padding: 12px; font-size: 16px;
-            box-sizing: border-box;
+            width: 90%; height: 100px; margin: 20px 0;
+            border-radius: 10px; border: 2px solid white; padding: 12px; font-size: 16px;
+            box-sizing: border-box; font-family: inherit;
         }
 
         #task-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: white; width: 85%; padding: 25px; border-radius: 20px;
-            text-align: center; display: none; z-index: 150;
+            text-align: center; display: none; z-index: 1500;
             box-shadow: 0 0 50px rgba(0,0,0,0.9); border: 5px solid var(--biu-blue);
             box-sizing: border-box;
         }
@@ -87,38 +93,51 @@
 <body>
 
     <div class="app-container">
-        <!-- מסך הגדרות והוראות -->
+        <!-- לוח הבקרה של המנחה (מופיע רק בהתחלה) -->
         <div id="setup-screen">
             <img src="header.png" class="img-header">
             
-            <div class="instructions-box">
-                <h3>📖 מדריך הפעלה בזום / טימס</h3>
+            <div class="guide-box">
+                <h2>🛠️ לוח בקרה למנחה (זום / טימס)</h2>
+                
+                <p><strong>מי שולט?</strong> רק אתה (המנחה) לוחץ על הכפתורים. המשתתפים צופים בשידור המסך שלך.</p>
+                
+                <h4>1. הכנה ושיתוף מסך:</h4>
                 <ul>
-                    <li><strong>שיתוף מסך:</strong> בחר בשיתוף חלון הדפדפן. סמן <strong>"Share Sound"</strong> כדי שישמעו את האפקטים.</li>
-                    <li><strong>הזנת שמות:</strong> העתק את רשימת המשתתפים מהצ'אט והדבק בתיבה למטה.</li>
-                    <li><strong>במהלך המשחק:</strong> לחץ על "סובב" להגרלת שם. כשהחבילה נעצרת, לחץ על <strong>המתנה</strong> כדי לגלות את המשימה.</li>
-                    <li><strong>טיפ למנחה:</strong> לאחר בחירת שם, בצע <strong>Spotlight</strong> למשתתף שנבחר כדי שכולם יראו אותו מבצע את המשימה.</li>
+                    <li>לחץ על <strong>Share Screen</strong> ובחר בחלון זה.</li>
+                    <li>סמן ב-V: <span class="highlight">Share Sound</span> (כדי שישמעו את האקשן).</li>
+                    <li>סמן ב-V: <span class="highlight">Optimize for Video</span> (כדי שהאנימציה תזרום).</li>
                 </ul>
+
+                <h4>2. הפעלת המשחק:</h4>
+                <ul>
+                    <li>הדבק את שמות המשתתפים בתיבה למטה ולחץ על "הכנס".</li>
+                    <li>לחץ על <strong>סובב חבילה</strong> להגרלת שם.</li>
+                    <li>כשהחבילה עוצרת - לחץ על <strong>המתנה</strong> כדי לגלות משימה.</li>
+                </ul>
+
+                <h4>3. טיפ למתקדמים (Remote Control):</h4>
+                <p>רוצה שהמשתתף "יפתח" את המתנה בעצמו? תן לו <strong>Remote Control</strong> דרך סרגל הזום, והוא יוכל ללחוץ על המתנה מהבית שלו!</p>
             </div>
 
-            <textarea id="nameInput" placeholder="הדבק כאן שמות (מופרדים בפסיקים או שורות)..."></textarea>
+            <textarea id="nameInput" placeholder="הדבק כאן שמות (מופרדים בפסיקים או שורות חדשות)..."></textarea>
             
             <img src="btn_enter.png" class="img-btn" onclick="initGame()">
         </div>
 
-        <!-- דף המשחק -->
+        <!-- דף המשחק (מה שרואים בשיתוף מסך) -->
         <img src="header.png" class="img-header">
         <img src="logo.png" class="img-logo">
 
-        <div id="player-display" class="player-display">חבילה עוברת</div>
+        <div id="player-display" class="player-display">מוכנים להתחיל?</div>
 
         <div class="gift-area">
             <img src="gift.png" id="giftImg" class="img-gift" onclick="showTask()">
         </div>
 
         <div id="task-overlay" onclick="this.style.display='none'">
-            <h2 id="task-text" style="color:#003e29; margin:0; font-size: 24px;">משימה</h2>
-            <p style="color:#888; margin-top:15px; font-size: 14px;">(לחץ לסגירה)</p>
+            <h2 id="task-text" style="color:#003e29; margin:0; font-size: 24px; line-height:1.4;">משימה</h2>
+            <p style="color:#888; margin-top:20px; font-size: 14px; font-weight:bold;">(לחץ לסגירה ומעבר לסיבוב הבא)</p>
         </div>
 
         <div class="footer-area">
@@ -140,13 +159,15 @@
             "מה החלום הבא שאתה רוצה להגשים?",
             "תן טיפ לחיים שעוזר לך ביומיום",
             "איך אתה שותה את הקפה שלך?",
-            "מה הדבר הראשון שתעשה בסוף התואר?"
+            "מה הדבר הראשון שתעשה בסוף התואר?",
+            "אם היית יכול להמציא קורס חדש - איך היו קוראים לו?",
+            "מה השיר שתמיד מרים לך את המצב רוח?"
         ];
 
         function initGame() {
             const input = document.getElementById('nameInput').value;
             players = input.split(/[,\n\t]+/).map(s => s.trim()).filter(s => s !== "");
-            if (players.length < 2) return alert("נא להזין לפחות 2 שמות כדי להתחיל");
+            if (players.length < 2) return alert("נא להזין לפחות 2 שמות כדי להתחיל את המשחק");
             document.getElementById('setup-screen').style.display = 'none';
         }
 
@@ -155,9 +176,10 @@
             spinning = true;
             document.getElementById('task-overlay').style.display = 'none';
             document.getElementById('giftImg').classList.remove('pulse');
+            document.getElementById('player-display').style.color = "#72d3f0";
             
             let counter = 0;
-            let totalSteps = 15 + Math.floor(Math.random() * 12);
+            let totalSteps = 12 + Math.floor(Math.random() * 15);
             
             const timer = setInterval(() => {
                 document.getElementById('player-display').innerText = players[counter % players.length];
@@ -166,7 +188,8 @@
                 if (counter > totalSteps) {
                     clearInterval(timer);
                     spinning = false;
-                    document.getElementById('player-display').innerText = "המשימה ל: " + document.getElementById('player-display').innerText;
+                    document.getElementById('player-display').style.color = "white";
+                    document.getElementById('player-display').innerText = "עצרנו על: " + document.getElementById('player-display').innerText;
                     document.getElementById('giftImg').classList.add('pulse');
                 }
             }, 100);
