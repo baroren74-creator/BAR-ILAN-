@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חבילה עוברת - בר אילן</title>
+    <style>
+        :root { --bg-green: #003e29; }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background-color: #001a11; /* רקע כהה מסביב */
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            direction: rtl; overflow: hidden;
+        }
+
+        /* מכל המשחק - לא נמתח! */
+        .app-container {
+            width: 420px;
+            height: 800px;
+            max-height: 95vh;
+            background-color: var(--bg-green);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        /* עיצוב התמונות */
+        .img-header { width: 100%; height: auto; }
+        .img-logo { width: 250px; margin-top: 20px; height: auto; }
+        .img-gift { width: 280px; cursor: pointer; transition: 0.3s; }
+        .img-btn { width: 340px; cursor: pointer; transition: transform 0.1s; }
+        .img-btn:active { transform: scale(0.95); }
+
+        /* הודעת שגיאה אם תמונה חסרה */
+        img:not([src]) { border: 2px dashed red; position: relative; }
+        img:not([src]):after { 
+            content: "חסר קובץ: " attr(src); 
+            display: block; color: red; background: white; font-size: 12px;
+        }
+
+        .player-display {
+            color: white; font-size: 40px; font-weight: bold;
+            margin-top: 30px; text-align: center; min-height: 50px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .gift-area { flex: 1; display: flex; justify-content: center; align-items: center; }
+
+        .pulse { animation: pulseAnim 0.7s infinite alternate; }
+        @keyframes pulseAnim { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        /* מסך הגדרות */
+        #setup-screen {
+            position: absolute; inset: 0; background: var(--bg-green);
+            z-index: 100; display: flex; flex-direction: column; align-items: center;
+        }
+
+        textarea {
+            width: 80%; height: 150px; margin: 30px 0;
+            border-radius: 10px; border: none; padding: 15px; font-size: 18px;
+        }
+
+        /* משימה קופצת */
+        #task-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; width: 80%; padding: 30px; border-radius: 20px;
+            text-align: center; display: none; z-index: 50;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9); border: 6px solid #72d3f0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- מסך התחלה -->
+        <div id="setup-screen">
+            <img src="header.png" class="img-header">
+            <h2 style="color:white; margin-top:40px;">הכנס שמות משתתפים:</h2>
+            <textarea id="nameInput" placeholder="שמות מופרדים בפסיקים..."></textarea>
+            <img src="btn_enter.png" class="img-btn" onclick="initGame()">
+        </div>
+
+        <!-- דף המשחק -->
+        <img src="header.png" class="img-header">
+        <img src="logo.png" class="img-logo">
+
+        <div id="player-display" class="player-display">חבילה עוברת</div>
+
+        <div class="gift-area">
+            <img src="gift.png" id="giftImg" class="img-gift" onclick="showTask()">
+        </div>
+
+        <div id="task-overlay" onclick="this.style.display='none'">
+            <h2 id="task-text" style="color:#003e29; margin:0; font-size: 30px;">משימה</h2>
+            <p style="color:#888; margin-top:20px;">(לחץ לסגירה)</p>
+        </div>
+
+        <div style="padding-bottom:40px;">
+            <img src="btn_spin.png" id="spinBtn" class="img-btn" onclick="startSpin()">
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let spinning = false;
+
+        const tasks = [
+            "ספר משהו שאנשים כאן לא יודעים עליך",
+            "מה המאכל האהוב עליך בקמפוס?",
+            "מה הדבר הכי מעניין שלמדת השבוע?",
+            "מי המרצה שהכי השפיע עליך?",
+            "ספר על פדיחה שקרתה לך בזום",
+            "מה המקום האהוב עליך באוניברסיטה?",
+            "תן טיפ לחיים לשאר הסטודנטים"
+        ];
+
+        function initGame() {
+            const input = document.getElementById('nameInput').value;
+            players = input.split(/[,\n]+/).map(s => s.trim()).filter(s => s !== "");
+            if (players.length < 2) return alert("נא להזין לפחות 2 שמות");
+            document.getElementById('setup-screen').style.display = 'none';
+        }
+
+        function startSpin() {
+            if (spinning) return;
+            spinning = true;
+            document.getElementById('task-overlay').style.display = 'none';
+            document.getElementById('giftImg').classList.remove('pulse');
+            
+            let counter = 0;
+            let totalSteps = 15 + Math.floor(Math.random() * 15);
+            
+            const timer = setInterval(() => {
+                document.getElementById('player-display').innerText = players[counter % players.length];
+                counter++;
+                
+                if (counter > totalSteps) {
+                    clearInterval(timer);
+                    spinning = false;
+                    document.getElementById('player-display').innerText = "המשימה ל: " + document.getElementById('player-display').innerText;
+                    document.getElementById('giftImg').classList.add('pulse');
+                }
+            }, 100);
+        }
+
+        function showTask() {
+            if (spinning) return;
+            const task = tasks[Math.floor(Math.random() * tasks.length)];
+            document.getElementById('task-text').innerText = task;
+            document.getElementById('task-overlay').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
